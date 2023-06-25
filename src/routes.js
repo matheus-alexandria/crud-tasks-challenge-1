@@ -9,7 +9,7 @@ export const routes = [
     path: '/task',
     handle: (req, res) => {
       const tasks = database.select('tasks');
-      return res.end(JSON.stringify(tasks));
+      return res.end(JSON.stringify({ tasks: tasks }));
     }
   }, 
   {
