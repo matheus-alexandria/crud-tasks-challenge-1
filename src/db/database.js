@@ -23,6 +23,16 @@ export class Database {
     return this.#database[table] ?? [];
   }
 
+  selectById(table, id) {
+    const row = this.#database[table].find((row) => row.id === id);
+    
+    if (!row) {
+      throw new Error('Cannot find row with this id');
+    }
+
+    return row;
+  }
+
   insert(table, data) {
     if (Array.isArray(this.#database[table])) {
       this.#database[table].push(data);
@@ -33,6 +43,15 @@ export class Database {
     this.#persist();
 
     return data;
+  }
+
+  update(table, id, data) {
+    const rowIndex = this.#database[table].findIndex((row) => row.id === id);
+
+    if (rowIndex > -1) {
+      this.#database[table][rowIndex] = {id, ...data};
+      this.#persist();
+    }
   }
 
   delete(table, id) {
