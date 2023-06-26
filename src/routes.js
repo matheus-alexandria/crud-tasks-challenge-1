@@ -33,11 +33,22 @@ export const routes = [
     }
   },
   {
+    method: 'PUT',
+    path: buildRoutePath('/task/:id'),
+    handle: (req, res) => {
+      const task = database.selectById('tasks', req.params.id);
+      const { title, description } = req.body;
+      database.update('tasks', req.params.id, { ...task, title, description, updated_at: new Date });
+
+      return res.writeHead(204).end();
+    }
+  },
+  {
     method: 'PATCH',
     path: buildRoutePath('/task/:id/complete'),
     handle: (req, res) => {
       const task = database.selectById('tasks', req.params.id);
-      database.update('tasks', req.params.id, { ...task, completed_at: new Date })
+      database.update('tasks', req.params.id, { ...task, completed_at: new Date})
 
       return res.writeHead(204).end();
     }
