@@ -27,7 +27,7 @@ export class Database {
     const row = this.#database[table].find((row) => row.id === id);
     
     if (!row) {
-      throw new Error('Cannot find row with this id');
+      throw new Error('There is no row with this id');
     }
 
     return row;
@@ -51,15 +51,19 @@ export class Database {
     if (rowIndex > -1) {
       this.#database[table][rowIndex] = {id, ...data};
       this.#persist();
+    } else {
+      throw new Error('There is no row with this id');
     }
   }
 
   delete(table, id) {
-    if (Array.isArray(this.#database[table])) {
-      const rows = this.#database[table].filter((row) => row.id !== id);
-      this.#database[table] = rows;
-    }
+    const rowIndex = this.#database[table].findIndex((row) => row.id === id);
 
-    this.#persist();
+    if (rowIndex > -1) {
+      this.#database[table].splice(rowIndex, 1);
+      this.#persist();
+    } else {
+      throw new Error('There is no row with this id');
+    }
   }
 }

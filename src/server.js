@@ -19,7 +19,13 @@ const server = createServer(async (req, res) => {
       req.params = {}
     }
 
-    return route.handle(req, res);
+    try {
+      return route.handle(req, res);
+    } catch (err) {
+      return res.writeHead(400).end(JSON.stringify({
+        message: err.message
+      }));
+    }
   }
 
   return res.writeHead(404).end();
