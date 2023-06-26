@@ -1,8 +1,25 @@
-import { buildRoutePath } from '../utils/buildRoutePath.js';
+import { buildRoutePath } from './utils/buildRoutePath.js';
 import { Database } from './db/database.js';
 import { randomUUID } from 'node:crypto';
+import { importCsv } from './utils/loadCsvFile.js';
 
 const database = new Database();
+
+const postTaskHandle = (req, res) => {
+  const { title, description } = req.body;
+  const now = new Date;
+
+  const task = database.insert('tasks', {
+    id: randomUUID(),
+    title,
+    description,
+    completed_at: null,
+    created_at: now,
+    updated_at: now,
+  });
+
+  return res.end(JSON.stringify(task));
+}
 
 export const routes = [
   {
@@ -16,21 +33,7 @@ export const routes = [
   {
     method: 'POST',
     path: buildRoutePath('/task'),
-    handle: (req, res) => {
-      const { title, description } = req.body;
-      const now = new Date;
-
-      const task = database.insert('tasks', {
-        id: randomUUID(),
-        title,
-        description,
-        completed_at: null,
-        created_at: now,
-        updated_at: now,
-      });
-
-      return res.end(JSON.stringify(task));
-    }
+    handle: postTaskHandle
   },
   {
     method: 'PUT',
@@ -61,5 +64,14 @@ export const routes = [
 
       return res.writeHead(204).end();
     }
-  }
+  },
+  {
+    method: 'POST',
+    path: buildRoutePath('/import'),
+    handle: (req, res) => {
+      importCsv(database);
+
+      return res.writeHead(201).end();
+    }
+  },
 ]

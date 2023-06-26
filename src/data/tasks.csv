@@ -1,0 +1,6 @@
+title,description
+Criar arquivo de CSV,Criar uma arquivo padrão de csv para implementar feature de leitura de csv
+Baixar a lib csv-parse,Baixar e implementar o csv-parse para leitura e uso dos dados de um csv
+Entender o doc,Entrar no doc para enteder o funcionamento da lib
+Corrigir bugs,Sempre tem bugs
+Comemorar,Colocar tudo no GitHub e comemorar ter feito o desafio
