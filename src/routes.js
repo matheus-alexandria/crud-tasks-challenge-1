@@ -5,22 +5,6 @@ import { importCsv } from './utils/loadCsvFile.js';
 
 const database = new Database();
 
-const postTaskHandle = (req, res) => {
-  const { title, description } = req.body;
-  const now = new Date;
-
-  const task = database.insert('tasks', {
-    id: randomUUID(),
-    title,
-    description,
-    completed_at: null,
-    created_at: now,
-    updated_at: now,
-  });
-
-  return res.end(JSON.stringify(task));
-}
-
 export const routes = [
   {
     method: 'GET',
@@ -33,7 +17,26 @@ export const routes = [
   {
     method: 'POST',
     path: buildRoutePath('/task'),
-    handle: postTaskHandle
+    handle: (req, res) => {
+      const { title, description } = req.body;
+      if (!title && !description) {
+        return res.writeHead(400).end(JSON.stringify({
+          message: "The body of this request is incomplete"
+        }));
+      }
+      const now = new Date;
+
+      const task = database.insert('tasks', {
+        id: randomUUID(),
+        title,
+        description,
+        completed_at: null,
+        created_at: now,
+        updated_at: now,
+      });
+
+      return res.end(JSON.stringify(task));
+    }
   },
   {
     method: 'PUT',
@@ -41,6 +44,12 @@ export const routes = [
     handle: (req, res) => {
       const task = database.selectById('tasks', req.params.id);
       const { title, description } = req.body;
+      if (!title && !description) {
+        return res.writeHead(400).end(JSON.stringify({
+          message: "The body of this request is incomplete"
+        }));
+      }
+
       database.update('tasks', req.params.id, { ...task, title, description, updated_at: new Date });
 
       return res.writeHead(204).end();
